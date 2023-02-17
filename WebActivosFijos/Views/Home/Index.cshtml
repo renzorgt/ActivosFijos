@@ -1,8 +1,65 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model List<ActivoFijo>
+@{
+    ViewData["Title"] = "Activos Fijos";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Gestion de Activos Fijos</h1>
 </div>
+<div class="card">
+    <div class="card-header">
+      
+    </div>
+    <div class="table-responsive">
+        <div class="card-header">
+            <a asp-action="ActivoFijo" asp-controller="Home" asp-route-id="0" class="btn btn-outline-primary">Nuevo Activo</a>
+        </div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Acciones</th>
+                    <th>Id</th>
+                    <th>Nombre</th>
+                    <th>Descripcion</th>
+                    <th>Tipo</th>
+                    <th>Serial</th>
+                    <th>Nro.Invent</th>
+                    <th>Peso</th>
+                    <th>Alto</th>
+                    <th>Ancho</th>
+                    <th>Largo</th>
+                    <th>ValorCompra</th>
+                    <th>FechaCompra</th>
+                    <th>FechaBaja</th>
+                    <th>EstadoActual</th>
+                </tr>
+            </thead>
+            <tb>
+                @foreach(var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <a asp-action="UpdateActivoFijo" asp-controller="Home" asp-route-id="@item.id" class="btn btn-outline-danger">Editar</a>
+                        </td>
+                        <td>@item.id</td>
+                        <td>@item.nombre</td>
+                        <td>@item.descripcion</td>
+                        <td>@item.ntipo</td>
+                        <td>@item.serial</td>
+                        <td>@item.numero_inventario</td>
+                        <td>@item.peso</td>
+                        <td>@item.alto</td>
+                        <td>@item.ancho</td>
+                        <td>@item.largo</td>
+                        <td>@item.valor_compra</td>
+                        <td>@item.fecha_compra.ToString("yyyy-MM-dd")</td>
+                        <td>@item.fecha_baja.ToString("yyyy-MM-dd")</td>
+                        <td>@item.nestado_actual</td>
+                    </tr>
+                    
+                }
+            </tbody>
+        </table>
+    </div>
+    </div>
+

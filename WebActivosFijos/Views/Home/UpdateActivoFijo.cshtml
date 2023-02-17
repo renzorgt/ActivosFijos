@@ -1,0 +1,37 @@
+﻿@model ActivoFijoUpdate
+@{
+    ViewData["Title"] = "UpdateActivoFijo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>UpdateActivoFijo</h1>
+
+<div class="card">
+    <div class="card-header">
+        @ViewBag.Accion
+    </div>
+    <div class="card-body">
+        <form asp-action="SaveUpdate" asp-controller="Home" method="post">
+           
+            <input asp-for="id" type="text"  class="form-control form-control-sm" />
+          
+            <div class="mb-2">
+                <label class="form-label">fecha_baja</label>
+                @Html.EditorFor(m => m.fecha_baja, new {@class = "form-control datepicker" , @id = "datepicker" })
+                @*<input type="text" class="form-control form-control-sm" asp-for="fecha_baja" />*@
+            </div>
+
+            <div class="mb-2">
+                <label class="form-label">Serial</label>
+                <input type="text" class="form-control form-control-sm" asp-for="serial" />
+            </div>
+
+            <button type="submit" class=" btn btn-success btn-sm"> Guardar</button>
+            <a asp-action="Index" asp-controller="Home" class="btn btn-outline-primary">Regresar</a>
+
+        </form>
+
+    </div>
+
+
+</div>

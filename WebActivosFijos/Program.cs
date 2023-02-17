@@ -1,7 +1,10 @@
+using WebActivosFijos.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IServiceApi, ServiceApi>();
 
 var app = builder.Build();
 

@@ -1,0 +1,95 @@
+﻿@model ActivoFijoInsert
+
+@{
+    ViewData["Title"] = "ActivoFijo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>ActivoFijo</h1>
+
+<div class="card">
+    <div class="card-header">
+        @ViewBag.Accion
+    </div>
+    <div class="card-body">
+        <form asp-action="SaveChange" asp-controller="Home" method="post">
+@*
+            <input asp-for="id" type="hidden" />*@
+            <div class="mb-2">
+                <label class="form-label">Nombre</label>
+                <input type="text" class="form-control form-control-sm" asp-for="nombre" />
+            </div>  
+            <div class="mb-2">
+                <label class="form-label">Descripcion</label>
+                <input type="text" class="form-control form-control-sm" asp-for="descripcion" />
+            </div>
+            <div class="mb-2">
+
+                <label class="form-label">tipo</label>
+                <input type="text" class="form-control form-control-sm" asp-for="tipo"/>
+            </div>
+            <div class="mb-2">
+                <label class="form-label">serial</label>
+                <input type="text" class="form-control form-control-sm" asp-for="serial" />
+            </div>
+            <div class="mb-2">
+                <label class="form-label">numero_inventario</label>
+                <input type="text" class="form-control form-control-sm" asp-for="numero_inventario" />
+            </div>
+            <div class="mb-2">
+                <label class="form-label">peso</label>
+                <input type="text" class="form-control form-control-sm" asp-for="peso" />
+            </div>
+            <div class="mb-2">
+                <label class="form-label">alto</label>
+                <input type="text" class="form-control form-control-sm" asp-for="alto" />
+            </div>
+            <div class="mb-2">
+                <label class="form-label">ancho</label>
+                <input type="text" class="form-control form-control-sm" asp-for="ancho" />
+            </div>
+            <div class="mb-2">
+                <label class="form-label">largo</label>
+                <input type="text" class="form-control form-control-sm" asp-for="largo" />
+            </div>
+            <div class="mb-2">
+                <label class="form-label">valor_compra</label>
+                <input type="text" class="form-control form-control-sm" asp-for="valor_compra" />
+            </div>
+            <div class="mb-2">
+                <label class="form-label">fecha_compra</label>
+                <input type="text" class="form-control form-control-sm" asp-for="fecha_compra" />
+            </div>
+            <div class="mb-2">
+                <label class="form-label">fecha_baja</label>
+                <input type="text" class="form-control form-control-sm" asp-for="fecha_baja" />
+            </div>
+            <div class="mb-2">
+                <label class="form-label">estado_actual</label>
+                <input type="text" class="form-control form-control-sm" asp-for="estado_actual" />
+            </div>
+            <div class="mb-2">
+                <label class="form-label">idarea</label>
+                <input type="text" class="form-control form-control-sm" asp-for="idarea" />
+            </div>
+            <div class="mb-2">
+                <label class="form-label">idpersona</label>
+                <input type="text" class="form-control form-control-sm" asp-for="idpersona" />
+            </div>
+
+            <div class="mb-2">
+                <label class="form-label">idciudad</label>
+                <input type="text" class="form-control form-control-sm" asp-for="idciudad" />
+            </div>
+            
+            <button type="submit" class=" btn btn-success btn-sm"> Guardar</button>
+            <a asp-action="Index" asp-controller="Home"  class="btn btn-outline-primary">Regresar</a>
+
+        </form>
+
+        <a asp-action="ActivoFijo" asp-controller="Home" asp-route-itemid="0" class="btn btn-outline-primary">Nuevo Activo</a>
+    </div>
+
+
+    </div>
+
