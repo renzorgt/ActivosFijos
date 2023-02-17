@@ -1,4 +1,6 @@
-﻿using ApiActivosFijos.Repository;
+﻿using ApiActivosFijos.Dtos;
+using ApiActivosFijos.Dtos.Tipo;
+using ApiActivosFijos.Repository;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -26,7 +28,31 @@ namespace ApiActivosFijos.Controllers
 
             return Ok(result);
         }
+        [HttpPost]
+        public async Task<IActionResult> InsertTipo([FromBody] TipoCreate tipoCreate)
+        {
+            try
+            {
 
-       
+                if (tipoCreate == null)
+                {
+                    return BadRequest();
+                }
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var created = await _tipoRepository.InsertTipo(tipoCreate);
+                return Created("", created);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
     }
 }

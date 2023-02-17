@@ -1,8 +1,11 @@
-﻿using ApiActivosFijos.Dtos.ActivoFijo.Querys;
+﻿using ApiActivosFijos.Dtos;
+using ApiActivosFijos.Dtos.ActivoFijo.Querys;
 using ApiActivosFijos.Dtos.Tipo;
+using ApiActivosFijos.Models;
 using ApiActivosFijos.MySqlContext;
 using Dapper;
 using MySql.Data.MySqlClient;
+using System.Data;
 
 namespace ApiActivosFijos.Repository
 {
@@ -33,6 +36,31 @@ namespace ApiActivosFijos.Repository
         public Task<IEnumerable<TipoView>> GetByFilterTipo(TipoSearch tipoSearch)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<Tipo> InsertTipo(TipoCreate tipoCreate)
+        {
+            var sql = new Query();
+            var parameters = new DynamicParameters();
+            parameters.Add("nombre", tipoCreate.nombre, DbType.String);
+
+            using (var db = dbConnection())
+            // using (var transaction = db.BeginTransaction())
+
+            {
+
+                var id = await db.QuerySingleAsync<int>(sql.InsertTipo, parameters);
+
+
+                var inserted = new Tipo
+                {
+                    id = id,
+                    nombre = tipoCreate.nombre,
+                    activo = "S"
+                };
+                //return result > 0;
+                return inserted;
+            }
         }
     }
 }

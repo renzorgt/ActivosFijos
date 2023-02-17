@@ -7,6 +7,9 @@ using ApiActivosFijos.Dtos.ActivoFijo;
 using ApiActivosFijos.Dtos.ActivoFijo.Querys;
 using Microsoft.OpenApi.Expressions;
 using System.Linq;
+using ApiActivosFijos.Dtos.Area;
+using ApiActivosFijos.Dtos;
+using ApiActivosFijos.Dtos.Estado;
 
 namespace ApiActivosFijos.Repository
 {
@@ -88,14 +91,8 @@ namespace ApiActivosFijos.Repository
         }
 
         public async Task<ActivoFijo> InsertActivoFijo(ActivoFijoCreate activoFijo)
-        {           
-                var sql = @"INSERT INTO activofijo
-                (nombre,descripcion,tipo,serial,numero_inventario,peso,
-                alto,ancho,largo,valor_compra,fecha_compra,fecha_baja,estado_actual) 
-                VALUES 
-                (@nombre,@descripcion,@tipo,serial,@numero_inventario,@peso,
-                @alto,@ancho,@largo,@valor_compra,@fecha_compra,@fecha_baja,@estado_actual); 
-                SELECT LAST_INSERT_ID();";
+        {
+            var sql = new Query();
             var parameters = new DynamicParameters();
             parameters.Add("nombre", activoFijo.nombre, DbType.String);
             parameters.Add("descripcion", activoFijo.descripcion, DbType.String);
@@ -116,24 +113,26 @@ namespace ApiActivosFijos.Repository
 
             {
                 //var result = await db.ExecuteAsync(sql,parameters);
-                var id = await db.QuerySingleAsync<int>(sql, parameters);
+                var id = await db.QuerySingleAsync<int>(sql.InsertActivoFijo, parameters);
 
-                if (activoFijo.idarea != null && activoFijo.idciudad != null)
+                if ((activoFijo.idarea != null && activoFijo.idciudad != null) && (activoFijo.idarea != 0 && activoFijo.idciudad != 0))
                 {
                     parameters.Add("idactivofijo", id, DbType.Int64);
                     parameters.Add("idarea", activoFijo.idarea, DbType.Int64);
                     parameters.Add("idciudad", activoFijo.idciudad, DbType.Int64);
-                    sql = "INSERT area_activofijo (idactivofijo, idarea, idciudad)" +
-                        " VALUES " +
-                        " (@idactivofijo,@idarea,@idciudad) ";
-                    var result = await db.ExecuteAsync(sql, parameters);
+                    //sql = "INSERT area_activofijo (idactivofijo, idarea, idciudad)" +
+                    //    " VALUES " +
+                    //    " (@idactivofijo,@idarea,@idciudad) ";
+                    var result = await db.ExecuteAsync(sql.InsertAreaActivoFijo, parameters);
                 }
                 else
                 {
-                    sql = "INSERT persona_activofijo (idactivofijo,idpersona)" +
-                                           " VALUES " +
-                                           " (@idactivofijo,@idpersona) ";
-                    var result = await db.ExecuteAsync(sql, parameters);
+                    parameters.Add("idactivofijo", id, DbType.Int64);
+                    parameters.Add("idpersona", activoFijo.idpersona, DbType.Int64);
+                    //sql = "INSERT persona_activofijo (idactivofijo,idpersona)" +
+                    //                       " VALUES " +
+                    //                       " (@idactivofijo,@idpersona) ";
+                    var result = await db.ExecuteAsync(sql.InsertPersonaActivoFijo, parameters);
                 }
                 var insertedactivo = new ActivoFijo
                 {
@@ -155,13 +154,13 @@ namespace ApiActivosFijos.Repository
             }
         }
 
-        public async Task<bool> UpdateActivoFijo(int Id ,ActivoFijo activoFijo)
+        public async Task<bool> UpdateActivoFijo(int Id , ActivoFijoUpdate activoFijo)
         {
 
             var sql = @"UPDATE activofijo set  serial = @serial, fecha_baja = @fecha_baja
                         where id = @Id";
             var parameters = new DynamicParameters();
-            parameters.Add("id", activoFijo.id, DbType.Int64);
+            parameters.Add("Id", Id, DbType.Int64);
             parameters.Add("fecha_baja", activoFijo.fecha_baja, DbType.Date);
             parameters.Add("serial", activoFijo.serial, DbType.String);
             using (var db = dbConnection())
@@ -173,5 +172,198 @@ namespace ApiActivosFijos.Repository
             }
 
         }
+
+        public async Task<IEnumerable<Area>> GetAllArea()
+        {
+            using (var db = dbConnection())
+            {
+
+                var sql = new Query();
+
+                var result = await db.QueryAsync<Area>(sql.SelectAllArea, new { });
+
+                return result.ToList();
+            }
+        }
+
+        public async Task<IEnumerable<Persona>> GetAllPersona()
+        {
+            using (var db = dbConnection())
+            {
+
+                var sql = new Query();
+
+                var result = await db.QueryAsync<Persona>(sql.SelectAllPersona, new { });
+
+                return result.ToList();
+            }
+        }
+        public async Task<IEnumerable<Estado>> GetAllEstado()
+        {
+            using (var db = dbConnection())
+            {
+
+                var sql = new Query();
+
+                var result = await db.QueryAsync<Estado>(sql.SelectAllEstado, new { });
+
+                return result.ToList();
+            }
+        }
+        public async Task<IEnumerable<Ciudad>> GetAllCiudad()
+        {
+            using (var db = dbConnection())
+            {
+
+                var sql = new Query();
+
+                var result = await db.QueryAsync<Ciudad>(sql.SelectAllCiudad, new { });
+
+                return result.ToList();
+            }
+        }
+
+        public async Task<IEnumerable<AreaCiudadView>> GetAllAreaCiudad(int? idarea)
+        {
+            using (var db = dbConnection())
+            {
+
+                var sql = new Query();
+                var condition = "";
+
+                if (idarea != null)
+                {
+                    condition = $" where idarea={idarea} ";
+                }
+                var result = await db.QueryAsync<AreaCiudadView>(sql.SelectAllAreaCiudad + condition, new { });
+
+                return result.ToList();
+            }
+        }
+
+        public async Task<Ciudad> InsertCiudad(CiudadCreate ciudadCreate)
+        {
+            var sql = new Query();
+            var parameters = new DynamicParameters();
+            parameters.Add("nombre", ciudadCreate.nombre, DbType.String);
+
+            using (var db = dbConnection())
+            // using (var transaction = db.BeginTransaction())
+
+            {
+               
+                var id = await db.QuerySingleAsync<int>(sql.InsertCiudad, parameters);
+
+              
+                var insertedciudad = new Ciudad
+                {
+                    id = id,
+                    nombre = ciudadCreate.nombre,
+                    activo = "S"
+                };
+                //return result > 0;
+                return insertedciudad;
+            }
+        }
+        public async Task<Area> InsertArea(AreaCreate areaCreate)
+        {
+            var sql = new Query();
+            var parameters = new DynamicParameters();
+            parameters.Add("nombre", areaCreate.nombre, DbType.String);
+
+            using (var db = dbConnection())
+            // using (var transaction = db.BeginTransaction())
+
+            {
+
+                var id = await db.QuerySingleAsync<int>(sql.InsertArea, parameters);
+
+
+                var inserted = new Area
+                {
+                    id = id,
+                    nombre = areaCreate.nombre,
+                    activo = "S"
+                };
+                //return result > 0;
+                return inserted;
+            }
+        }
+        public async Task<Persona> InsertPersona(PersonaCreate personaCreate)
+        {
+            var sql = new Query();
+            var parameters = new DynamicParameters();
+            parameters.Add("nombre", personaCreate.nombre, DbType.String);
+
+            using (var db = dbConnection())
+            // using (var transaction = db.BeginTransaction())
+
+            {
+
+                var id = await db.QuerySingleAsync<int>(sql.InsertPersona, parameters);
+
+
+                var inserted = new Persona
+                {
+                    id = id,
+                    nombre = personaCreate.nombre,
+                    activo = "S"
+                };
+                //return result > 0;
+                return inserted;
+            }
+        }
+
+        public async Task<AreaCiudadView> InsertAreaCiudad(AreaCiudadCreate areaciudadCreate)
+        {
+            var sql = new Query();
+            var parameters = new DynamicParameters();
+            parameters.Add("idciudad", areaciudadCreate.idciudad, DbType.String);
+            parameters.Add("idarea", areaciudadCreate.idarea, DbType.String);
+
+            using (var db = dbConnection())
+            // using (var transaction = db.BeginTransaction())
+
+            {
+
+                var id = await db.QuerySingleAsync<int>(sql.InsertAreaCiudad, parameters);
+
+
+                var insertedareaciudad = new AreaCiudadView
+                {
+                    id = id,
+                    idarea = areaciudadCreate.idarea,
+                    idciudad = areaciudadCreate.idciudad,
+                    activo = "S"
+                };
+
+                return insertedareaciudad;
+               // return insertedciudad;
+            }
+        }
+        public async Task<Estado> InsertEstado(EstadoCreate estadoCreate)
+        {
+            var sql = new Query();
+            var parameters = new DynamicParameters();
+            parameters.Add("nombre", estadoCreate.nombre, DbType.String);
+
+            using (var db = dbConnection())
+
+            {
+
+                var id = await db.QuerySingleAsync<int>(sql.InsertEstado, parameters);
+
+
+                var insertedciudad = new Estado
+                {
+                    id = id,
+                    nombre = estadoCreate.nombre,
+                    activo = "S"
+                };
+                //return result > 0;
+                return insertedciudad;
+            }
+        }
+
     }
 }

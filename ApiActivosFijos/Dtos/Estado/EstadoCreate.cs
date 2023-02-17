@@ -1,11 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ApiActivosFijos.Dtos
+namespace ApiActivosFijos.Dtos.Estado
 {
-    public class PersonaCreate
+    public class EstadoCreate
     {
         [Required(ErrorMessage = " nombre Es requerido")]
 
         public string nombre { get; set; }
+
     }
 }

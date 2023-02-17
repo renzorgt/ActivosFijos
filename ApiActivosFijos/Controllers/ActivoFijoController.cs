@@ -1,6 +1,9 @@
-﻿using ApiActivosFijos.Dtos.ActivoFijo;
+﻿using ApiActivosFijos.Dtos;
+using ApiActivosFijos.Dtos.ActivoFijo;
+using ApiActivosFijos.Dtos.Estado;
 using ApiActivosFijos.Models;
 using ApiActivosFijos.Repository;
+using AutoWrapper.Wrappers;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -69,15 +72,28 @@ namespace ApiActivosFijos.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateActivoFijo(int Id, [FromBody] ActivoFijo activofijo)
+        
+        public async Task<IActionResult> UpdateActivoFijo(int Id, [FromBody] ActivoFijoUpdate activofijo)
         {
             if (activofijo == null)
             {
-                return BadRequest();
+                return BadRequest(new ApiResponse("Modelo no corresponde al requerido", 400));
             }
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(new ApiResponse("Modelo no corresponde al requerido", ModelState, 400));
+            }
+            if (Id == null || Id == 0)
+            {
+                return BadRequest(new ApiResponse("La variable ID no se a establecido", Id, 400));
+            }
+            if (activofijo.fecha_baja == null)
+            {
+                return BadRequest(new ApiResponse("La variable ID no se a fecha_baja", Id, 400));
+            }
+            if (activofijo.serial == null)
+            {
+                return BadRequest(new ApiResponse("La variable ID no se a fecha_baja", Id, 400));
             }
 
             var created = await _activofijoRepository.UpdateActivoFijo(Id,activofijo);
@@ -85,9 +101,42 @@ namespace ApiActivosFijos.Controllers
             return NoContent();
         }
 
-        //[HttpDelete("{id}")]
-        //public void Delete(int id)
-        //{
-        //}
+        [HttpPost("Estados")]
+        public async Task<IActionResult> InsertEstado([FromBody] EstadoCreate estadoCreate)
+        {
+            try
+            {
+
+                if (estadoCreate == null)
+                {
+                    return BadRequest();
+                }
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var created = await _activofijoRepository.InsertEstado(estadoCreate);
+                return Created("", created);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("Estados")]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await _activofijoRepository.GetAllEstado();
+
+            if (result.Count() == 0)
+            {
+                return NotFound();
+            }
+
+            return Ok(result);
+        }
     }
 }

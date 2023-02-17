@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ApiActivosFijos.Dtos;
+using ApiActivosFijos.Dtos.Area;
+using ApiActivosFijos.Repository;
+using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,36 +11,87 @@ namespace ApiActivosFijos.Controllers
     [ApiController]
     public class AreaController : ControllerBase
     {
-        // GET: api/<AreaController>
+        private readonly IActivoFijoRepository _activofijoRepository;
+
+        public AreaController(IActivoFijoRepository activofijoRepository)
+        {
+            _activofijoRepository = activofijoRepository;
+        }
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IActionResult> GetAll()
         {
-            return new string[] { "value1", "value2" };
+            var result = await _activofijoRepository.GetAllArea();
+
+            if (result.Count() == 0)
+            {
+                return NotFound();
+            }
+
+            return Ok(result);
+        }
+        [HttpGet("AreaCiudad")]
+        public async Task<IActionResult> GetAllAreaCiudad(int? idarea)
+        {
+            var result = await _activofijoRepository.GetAllAreaCiudad(idarea);
+
+            if (result.Count() == 0)
+            {
+                return NotFound();
+            }
+
+            return Ok(result);
         }
 
-        // GET api/<AreaController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<AreaController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> InsertArea([FromBody] AreaCreate areaCreate)
         {
+            try
+            {
+
+                if (areaCreate == null)
+                {
+                    return BadRequest();
+                }
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var created = await _activofijoRepository.InsertArea(areaCreate);
+                return Created("", created);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-        // PUT api/<AreaController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPost("AreaCiudad")]
+        public async Task<IActionResult> InsertAreaCiudad([FromBody] AreaCiudadCreate areaciudadCreate)
         {
+            try
+            {
+
+                if (areaciudadCreate == null)
+                {
+                    return BadRequest();
+                }
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var created = await _activofijoRepository.InsertAreaCiudad(areaciudadCreate);
+                return Created("", created);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-        // DELETE api/<AreaController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+
     }
 }

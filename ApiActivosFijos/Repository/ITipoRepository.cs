@@ -1,4 +1,5 @@
-﻿using ApiActivosFijos.Dtos.Tipo;
+﻿using ApiActivosFijos.Dtos;
+using ApiActivosFijos.Dtos.Tipo;
 using ApiActivosFijos.Models;
 
 namespace ApiActivosFijos.Repository
@@ -7,8 +8,10 @@ namespace ApiActivosFijos.Repository
     {
         Task<IEnumerable<TipoView>> GetAllTipo();
         Task<IEnumerable<TipoView>> GetByFilterTipo(TipoSearch tipoSearch);
-       // Task<bool> UpdateTipo(int Id, ActivoFijo activoFijo);
-        //Task<ActivoFijo> InsertTipo(ActivoFijoCreate activoFijo);
+
+        Task<Tipo> InsertTipo(TipoCreate tipoCreate);
+
+
 
     }
 }

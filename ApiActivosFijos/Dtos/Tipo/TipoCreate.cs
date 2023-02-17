@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ApiActivosFijos.Dtos
+namespace ApiActivosFijos.Dtos.Tipo
 {
-    public class PersonaCreate
+    public class TipoCreate
     {
         [Required(ErrorMessage = " nombre Es requerido")]
 
